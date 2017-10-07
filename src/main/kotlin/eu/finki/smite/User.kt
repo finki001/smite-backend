@@ -10,7 +10,7 @@ class User() {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int? = null
+    val id: Int? = 0
 
     lateinit var name: String
 
