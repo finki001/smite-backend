@@ -17,21 +17,22 @@ private const val URL_MATCH_HISTORY = "getmatchhistory"
 
 private const val DEV_ID = 1187
 private const val AUTHENTICATION_KEY = "7B0A5FE00FF0484CAAB0CFABBEE52AA6"
+
 private var sessionId: String? = null
+private val restTemplate = RestTemplate()
 
 fun main(args: Array<String>) {
     createSessionId()
     log.info("Matches: ${getMatchHistory("gane5ha").size}")
 }
 
-fun createSessionId() {
+fun createSessionId(): String? {
     val url = URL_CREATE_SESSION
     val timestamp = createTimeStamp()
     val signature = createSignature(url, timestamp)
     val finalUrl = "$URL_BACKEND_HOST${url}Json/$DEV_ID/$signature/$timestamp"
-    val restTemplate = RestTemplate()
-    val createSessionResponse = restTemplate.getForObject(finalUrl, SessionResponse::class.java)
-    sessionId = createSessionResponse.sessionId
+    sessionId = restTemplate.getForObject(finalUrl, SessionResponse::class.java).sessionId
+    return sessionId
 }
 
 fun getMatchHistory(playerName: String): Array<Match> {
@@ -39,9 +40,7 @@ fun getMatchHistory(playerName: String): Array<Match> {
     val timestamp = createTimeStamp()
     val signature = createSignature(url, timestamp)
     val finalUrl = "$URL_BACKEND_HOST${url}Json/$DEV_ID/$signature/$sessionId/$timestamp/$playerName"
-    val restTemplate = RestTemplate()
-    val matchHistoryResponse = restTemplate.getForEntity(finalUrl, Array<Match>::class.java)
-    return matchHistoryResponse.body
+    return restTemplate.getForEntity(finalUrl, Array<Match>::class.java).body
 }
 
 fun createTimeStamp() = SimpleDateFormat("yyyyMMddHHmmss").apply {
