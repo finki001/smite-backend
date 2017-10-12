@@ -1,12 +1,7 @@
 package eu.finki.smite.service
 
-import eu.finki.smite.model.God
-import eu.finki.smite.model.Item
-import eu.finki.smite.model.Match
-import eu.finki.smite.model.SessionResponse
-import eu.finki.smite.repository.GodRepository
-import eu.finki.smite.repository.ItemRepository
-import eu.finki.smite.repository.MatchRepository
+import eu.finki.smite.model.*
+import eu.finki.smite.repository.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.security.MessageDigest
@@ -33,6 +28,12 @@ class SmiteService {
 
     @Autowired
     lateinit var itemRepository: ItemRepository
+
+    @Autowired
+    lateinit var itemDetailsRepository: ItemDetailsRepository
+
+    @Autowired
+    lateinit var menuItemRepository: MenuItemRepository
 
     @Autowired
     lateinit var matchRepository: MatchRepository
@@ -79,7 +80,22 @@ class SmiteService {
         }
         val finalUrl = "$URL_BACKEND_HOST${url}Json/$DEV_ID/$signature/$sessionId/$timestamp/1"
         val items = restTemplate.getForEntity(finalUrl, Array<Item>::class.java).body
+        val menuItemsList = mutableListOf<MenuItem?>()
         itemRepository.save(items.toList())
+        val itemDetailsList = items.map { item ->
+            item.details.apply {
+                this?.item = item
+            }
+        }
+        itemDetailsRepository.save(itemDetailsList)
+        itemDetailsList.forEach { details ->
+            details?.menuItems?.forEach { menuItem ->
+                menuItemsList.add(menuItem.apply {
+                    this.itemDetails = details
+                })
+            }
+        }
+        //menuItemRepository.save(menuItemsList)
         return "Items updated"
     }
 

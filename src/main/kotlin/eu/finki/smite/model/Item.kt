@@ -3,9 +3,8 @@ package eu.finki.smite.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
@@ -25,21 +24,9 @@ class Item {
     @JsonProperty("IconId")
     var iconId: Int = -1
 
-    //    "ItemDescription":
-//    {
-//        "Description": "Physical Protection and Health.",
-//        "Menuitems": [
-//        {
-//            "Description": "Health",
-//            "Value": "+75"
-//        },
-//        {
-//            "Description": "Physical Protection",
-//            "Value": "+10"
-//        }
-//        ],
-//        "SecondaryDescription": null
-//    },
+    @JsonProperty("ItemDescription")
+    @Transient
+    var details: ItemDetails? = null
 
     @JsonProperty("ItemTier")
     var itemTier: Int = -1
@@ -63,4 +50,42 @@ class Item {
     var iconUrl: String? = null
 
     override fun toString() = "Item{\n\tid='$id',\n\tname='$name'\n\t}"
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+class ItemDetails {
+
+    @Id
+    var id: Int = -1
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    var item: Item? = null
+
+    @JsonProperty("Description")
+    var description: String? = null
+
+    @JsonProperty("Menuitems")
+    @OneToMany(cascade = arrayOf(CascadeType.REMOVE), mappedBy = "itemDetails")
+    var menuItems: List<MenuItem>? = null
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+class MenuItem {
+
+    @Id
+    @GeneratedValue
+    var id: Int = -1
+
+    @JsonProperty("Description")
+    var description: String? = null
+
+    @JsonProperty("Value")
+    var value: String? = null
+
+    @ManyToOne
+    @JoinColumn(name="item_details_id")
+    var itemDetails: ItemDetails? = null
 }
