@@ -1,4 +1,4 @@
-package eu.finki.smite
+package eu.finki.smite.controller
 
 import eu.finki.smite.service.SmiteService
 import org.springframework.beans.factory.annotation.Autowired
