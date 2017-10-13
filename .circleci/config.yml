@@ -39,7 +39,11 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
         
       # run tests!
-      - run: gradle build
+      - run: gradle bootRepackage
+
+      - store_artifacts:
+                path: /build/libs/smite-backend.jar
+                destination: smite-backend.jar
 
 
 
