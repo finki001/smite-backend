@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/libs/smite-backend.jar
+web: java $JAVA_OPTS -Dserver.port=$PORT -jar app.jar
