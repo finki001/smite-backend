@@ -20,6 +20,10 @@ class ApiController {
     @Autowired
     lateinit var smiteService: SmiteService
 
+    @GetMapping("/")
+    @ResponseBody
+    fun home() = "Smite API"
+
     @GetMapping("/gods/{godId}")
     @ResponseBody
     fun getGodById(@PathVariable(value = "godId") godId: Int) {
