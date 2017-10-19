@@ -1,7 +1,9 @@
 package eu.finki.smite.service
 
 import eu.finki.smite.model.*
-import eu.finki.smite.repository.*
+import eu.finki.smite.repository.GodRepository
+import eu.finki.smite.repository.ItemDetailsRepository
+import eu.finki.smite.repository.ItemRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.security.MessageDigest
@@ -31,12 +33,6 @@ class SmiteService {
 
     @Autowired
     lateinit var itemDetailsRepository: ItemDetailsRepository
-
-    @Autowired
-    lateinit var menuItemRepository: MenuItemRepository
-
-    @Autowired
-    lateinit var matchRepository: MatchRepository
 
     private var sessionId: String? = null
     private val restTemplate = org.springframework.web.client.RestTemplate()
@@ -95,7 +91,6 @@ class SmiteService {
                 })
             }
         }
-        //menuItemRepository.save(menuItemsList)
         return "Items updated"
     }
 
